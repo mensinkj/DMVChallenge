@@ -16,7 +16,6 @@ namespace DmvAppointmentScheduler
             TellerList tellers = ReadTellerData();
             Calculation(customers, tellers);
             OutputTotalLengthToConsole();
-
         }
         private static CustomerList ReadCustomerData()
         {
@@ -38,45 +37,62 @@ namespace DmvAppointmentScheduler
         }
         static void Calculation(CustomerList customers, TellerList tellers)
         {
-            //Least common type
-            //Console.WriteLine(LeastCommonCustomer(customers));
+<<<<<<< HEAD
+
             //sort Customers by length
-            customers.Customer.OrderBy(x => x.duration);
-            foreach(Customer customer in customers.Customer)
+            var OrderedList = customers.Customer.OrderBy(x => Int32.Parse(x.duration)).Reverse();
+            foreach(Customer customer in OrderedList)
             {
                 var appointment = new Appointment(customer, findBestTeller(customer, tellers));
-                appointmentList.Add(appointment);
+                appointmentList.Add(appointment);                
             }
-            
-
-            
-            // What is less common customer
-            // Your code goes here .....
-            // Re-write this method to be more efficient instead of a random assignment
-            //foreach(Customer customer in customers.Customer)
-            //{
-            //    var appointment = new Appointment(customer, tellers.Teller[random.Next(150)]);
-            //    appointmentList.Add(appointment);
-            //}
         }
         static Teller findBestTeller(Customer customer, TellerList tellers)
         {
             Teller best = tellers.Teller[0];
             var typeSort = tellers.Teller.Where(x => x.specialtyType.Equals(customer.type));
+            var notType = tellers.Teller.Where(x => !x.specialtyType.Equals(customer.type));
+            notType = notType.OrderBy(x => Int32.Parse(x.specialtyType)).ThenByDescending(x => x.multiplier);
             var multipleSort = typeSort.OrderBy(x => x.multiplier);
             var lowestNumber = 999999;
             foreach(Teller teller in multipleSort)
             {
-                if (TotalforTeller(teller) < lowestNumber)
+                var total = TotalforTeller(teller);
+                if (total < lowestNumber)
                 {
                     best = teller;
-                };
+                    lowestNumber = total;
+                }
             }
             if(best == tellers.Teller[0])
             {
-               best = tellers.Teller[random.Next(150)];
+                foreach(Teller teller in notType)
+                {
+                    var total = TotalforTeller(teller);
+                    if(total < lowestNumber)
+                    {
+                        best = teller;
+                        lowestNumber = total;
+                    }
+                }
+                if(best == tellers.Teller[0])
+                {
+                    best = tellers.Teller[random.Next(149)];
+                }
+
             }
-            //tellers.Teller.OrderBy(x => x.)
+            else
+            {
+                foreach (Teller teller in notType)
+                {
+                    var total = TotalforTeller(teller) + 10;
+                    if (total < lowestNumber)
+                    {
+                        best = teller;
+                        lowestNumber = total;
+                    }
+                }
+            }
             return best;
         }
         static string LeastCommonCustomer(CustomerList customers)
@@ -93,6 +109,14 @@ namespace DmvAppointmentScheduler
                     least = total;
                     leastType = type;
                 }
+=======
+            // Your code goes here .....
+            // Re-write this method to be more efficient instead of a assigning all customers to the same teller
+            foreach(Customer customer in customers.Customer)
+            {
+                var appointment = new Appointment(customer, tellers.Teller[0]);
+                appointmentList.Add(appointment);
+>>>>>>> ebec9dbcd000073ae5372cb2d57a30bb41a6cf89
             }
             return leastType;
         }
